@@ -1,0 +1,60 @@
+# General
+.DS_Store
+Thumbs.db
+
+# Logs and databases
+*.log
+*.sqlite
+*.sqlite3
+
+# Compiled files and caches
+*.pyc
+*.pyo
+*.exe
+*.dll
+*.o
+*.so
+*.out
+
+# Virtual environments
+venv/
+.env/
+node_modules/
+
+# Editor-specific files
+.vscode/
+.idea/
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw*
+
+# Dependency directories
+bower_components/
+
+# Build output
+/dist/
+/build/
+
+# System-specific files
+*.bak
+*.tmp
+
+# Git
+.gitignore
+.gitattributes
+
+# C# Specific
+bin/
+obj/
+*.csproj.user
+*.suo
+*.user
+*.vs/
+*.nupkg
+*.snupkg
+*.cache
+*.coverage
+TestResults/
+*.pdb
