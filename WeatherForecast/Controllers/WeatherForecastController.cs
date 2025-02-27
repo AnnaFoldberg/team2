@@ -1,58 +1,44 @@
-// using System.Text.Json;
-// using Microsoft.AspNetCore.Mvc;
-// using WeatherForecast.Models;
+using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
+using WeatherForecast.Models;
 
-// namespace WeatherForecast.Controllers;
+namespace WeatherForecast.Controllers;
 
 // [ApiController]
 // [Route("[controller]")]
-// public class WeatherForecastController : ControllerBase
-// {
-    // private string baseUrl = "http://api.weatherstack.com/";
-    // private string accessKey = "5ae9b5ccaf37d403fa97e2cabf94e749";
+public class WeatherForecastController // : ControllerBase
+{
+  private string baseUrl = "http://api.weatherstack.com/";
+  private string accessKey = "4e22fe1bb724f4f76e70d0a0f59b4355";
 
-// 
-//   [httpGet ("current")]
-//     public async Task GetWeatherForecast(string query)
-//     {
-//         using HttpClient client = new HttpClient();
+  public async Task GetWeatherForecast(string query)
+  {
+    using (var client = new HttpClient())
+    {
+      var url = new Uri($"{baseUrl}/current?access_key={accessKey}&query={query}");
+      var response = await client.GetAsync(url);  // Await the HTTP call
+      if (response.IsSuccessStatusCode)
+      {
+          string responseBody = await response.Content.ReadAsStringAsync();
 
-//         string url = $"{baseUrl}?access_key={accessKey}&query={query}";
+          // Console.WriteLine(responseBody);
 
-//         HttpResponseMessage response = await client.GetAsync(url);
+          var weatherData = JsonSerializer.Deserialize<WeatherData>(responseBody, new JsonSerializerOptions
+          {
+              PropertyNameCaseInsensitive = true
+          });
 
-//         if (response.IsSuccessStatusCode)
-//         {
-//             string responseBody = await response.Content.ReadAsStringAsync();
-//             // WeatherForecast weatherForecast = JsonSerializer.Deserialize<WeatherForecast>(json);
-//             Request request = JsonSerializer.Deserialize<Request>(responseBody[0]);
-//             Current current = JsonSerializer.Deserialize<Current>(responseBody[1]);
-//             Location location = JsonSerializer.Deserialize<Location>(responseBody[2]);
-
-  //           Console.WriteLine(responseBody);
-  //           Console.WriteLine($"Request: {request.Type}, {request.Query}, {request.Language}, {request.Unit}");
-  //           Console.WriteLine($"Current: {current.Temperature}, {current.WeatherDescriptions}, {current.WindSpeed}");
-  //           Console.WriteLine($"Location: {location.Name}, {location.Country}, {location.Region}");// 
- //        }
-  //       else
-  //       {
-  //           Console.WriteLine($"Error: {response.StatusCode}");
-  //       }
-
-
-//     private static HttpClient sharedClient = new()
-//     {
-//         BaseAddress = new Uri("http://api.weatherstack.com"),
-//     };
-
-//     static async Task GetWeatherForecast(HttpClient httpClient)
-//     {
-//         using HttpResponseMessage response = await httpClient.GetAsync($"current?access_key=5ae9b5ccaf37d403fa97e2cabf94e749&query=Copenhagen");
-        
-//         response.EnsureSuccessStatusCode();
-//             //.WriteRequestToConsole();
-        
-//         var jsonResponse = await response.Content.ReadAsStringAsync();
-//         Console.WriteLine($"{jsonResponse}\n");
-//     }
-// }
+          if (weatherData != null)
+          {
+              Console.WriteLine($"Request: {weatherData.Request?.Type}, {weatherData.Request?.Query}, {weatherData.Request?.Language}, {weatherData.Request?.Unit}");
+              Console.WriteLine($"Current: {weatherData.Current?.Temperature}, {string.Join(", ", weatherData.Current?.WeatherDescriptions ?? new string[]{})}, {weatherData.Current?.WindSpeed}");
+              Console.WriteLine($"Location: {weatherData.Location?.Name}, {weatherData.Location?.Country}, {weatherData.Location?.Region}");
+          }
+      }
+      else
+      {
+          Console.WriteLine($"Error: {response.StatusCode}");
+      }
+    }
+  }
+}

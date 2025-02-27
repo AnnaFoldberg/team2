@@ -1,8 +1,14 @@
+using System.Text.Json.Serialization;
 namespace WeatherForecast.Models;
 
 public class Current
 {
-    public int Temperature { get; set; }
-    public string[] WeatherDescriptions { get; set; }
-    public int WindSpeed {  get; set; }
+    [JsonPropertyName("temperature")]
+    public int? Temperature { get; set; }
+    
+    [JsonPropertyName("weather_descriptions")]
+    public string[]? WeatherDescriptions { get; set; }
+
+    [JsonPropertyName("wind_speed")]
+    public int? WindSpeed {  get; set; }
 }
